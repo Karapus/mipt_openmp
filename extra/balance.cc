@@ -1,11 +1,8 @@
 #include <omp.h>
 #include <iostream>
 #include <iomanip>
-#include <iterator>
-#include <sstream>
-#include <algorithm>
-#include <vector>
-#include <type_traits>
+#include <cstdlib>
+#include <unistd.h>
 
 #ifndef SCHEDULE
 #define SCHEDULE
@@ -17,11 +14,13 @@ int main(int argc, char *argv[]) {
     n = std::stoull(argv[1]);
 
   [[ omp::directive(parallel for SCHEDULE) ]]
-    for (decltype(n) i = 0; i < n; ++i)
+    for (decltype(n) i = 0; i < n; ++i) {
+      usleep(std::rand() % 1000);
       [[omp::directive(critical)]] std::cout
         << "Iteration #"
         << std::setfill('0') << std::setw(2)
         << i
         << " Thread #" << omp_get_thread_num()
         << std::endl;
+    }
 }
